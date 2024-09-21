@@ -4,6 +4,7 @@ import com.cydeo.enums.AccountType;
 import com.cydeo.exception.AccountOwnershipException;
 import com.cydeo.exception.BadRequestException;
 import com.cydeo.exception.BalanceNotSufficientException;
+import com.cydeo.exception.UnderConstructionException;
 import com.cydeo.model.Account;
 import com.cydeo.model.Transaction;
 import com.cydeo.repository.AccountRepository;
@@ -11,6 +12,7 @@ import com.cydeo.repository.TransactionRepository;
 import com.cydeo.service.AccountService;
 import com.cydeo.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,6 +22,9 @@ import java.util.Objects;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
+
+    @Value("${under_construction}")
+    private boolean underConstruction;
 
     private final TransactionRepository transactionRepository;
     private final AccountService accountService;
@@ -38,22 +43,25 @@ public class TransactionServiceImpl implements TransactionService {
             - if sender has enough balance to make transfer?
             - if both accounts are checking, if not, one of them saving, it needs to be same userId
          */
+        if(!underConstruction) {
+            validateAccount(sender, receiver);
+            checkAccountOwnership(sender, receiver);
+            executeBalanceAndUpdateIfRequired(amount, sender, receiver);
 
-        validateAccount(sender, receiver);
-        checkAccountOwnership(sender, receiver);
-        executeBalanceAndUpdateIfRequired(amount, sender, receiver);
+            Transaction transaction = Transaction.builder()
+                    .sender(sender.getId())
+                    .receiver(receiver.getId())
+                    .amount(amount)
+                    .createDate(createDate)
+                    .message(message)
 
-        Transaction transaction = Transaction.builder()
-                .sender(sender.getId())
-                .receiver(receiver.getId())
-                .amount(amount)
-                .createDate(createDate)
-                .message(message)
-
-                .build();
+                    .build();
 
 
-        return transactionRepository.save(transaction);
+            return transactionRepository.save(transaction);
+        } else {
+            throw new UnderConstructionException("App is under construction, please try again later!");
+        }
     }
 
     private void validateAccount(Account sender, Account receiver) throws BadRequestException {
