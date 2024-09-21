@@ -96,7 +96,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private void executeBalanceAndUpdateIfRequired(BigDecimal amount, Account sender, Account receiver) {
         if(sender.getBalance().compareTo(amount) > 0) {
-            sender.setBalance(receiver.getBalance().subtract(amount));
+            sender.setBalance(sender.getBalance().subtract(amount));
             receiver.setBalance(receiver.getBalance().add(amount));
         } else {
             throw new BalanceNotSufficientException("Sender balance is not sufficient for given amount");
