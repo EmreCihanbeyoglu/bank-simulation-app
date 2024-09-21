@@ -1,6 +1,8 @@
 package com.cydeo.service.impl;
 
 import com.cydeo.enums.AccountType;
+import com.cydeo.exception.AccountNotFoundException;
+import com.cydeo.exception.BadRequestException;
 import com.cydeo.model.Account;
 import com.cydeo.repository.AccountRepository;
 import com.cydeo.service.AccountService;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -39,4 +42,11 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> getAllAccounts() {
         return accountRepository.findAllAccounts();
     }
+
+    @Override
+    public Account getAccountById(UUID id) {
+        return accountRepository.findAccountById(id).orElseThrow(() -> new AccountNotFoundException("Account not found with accountId: " + id));
+    }
+
+
 }

@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class AccountRepository {
@@ -18,5 +20,12 @@ public class AccountRepository {
 
     public List<Account> findAllAccounts() {
         return accountList;
+    }
+
+    public Optional<Account> findAccountById(UUID id) {
+        return accountList
+                .stream()
+                .filter(account -> account.getId().equals(id))
+                .findFirst();
     }
 }
