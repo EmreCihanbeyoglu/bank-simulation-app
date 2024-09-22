@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class TransactionRepository {
@@ -18,6 +19,12 @@ public class TransactionRepository {
 
     public List<Transaction> findAll() {
         return transactionList;
+    }
+
+    public List<Transaction> findTransactionsByAccountId(UUID accountId) {
+        return findAll().stream()
+                .filter(transaction -> transaction.getSender().equals(accountId) || transaction.getReceiver().equals(accountId))
+                .toList();
     }
 
 }

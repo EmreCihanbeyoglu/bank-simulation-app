@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -116,6 +117,11 @@ public class TransactionServiceImpl implements TransactionService {
                 .stream()
                 .sorted(Comparator.comparing(Transaction::getCreateDate).reversed())
                 .limit(10).toList();
+    }
+
+    @Override
+    public List<Transaction> findTransactionsByAccountId(UUID accountId) {
+        return transactionRepository.findTransactionsByAccountId(accountId);
     }
 
 
