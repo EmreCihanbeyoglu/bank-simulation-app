@@ -1,5 +1,6 @@
 package com.cydeo.controller;
 
+import com.cydeo.model.Account;
 import com.cydeo.model.Transaction;
 import com.cydeo.service.AccountService;
 import com.cydeo.service.TransactionService;
@@ -35,7 +36,10 @@ public class TransactionController {
 
     @PostMapping("/perform-transfer")
     public String makeTransfer(@ModelAttribute("transaction") Transaction transaction) {
-        transactionService.makeTransaction(transaction.getSender(), transaction.getReceiver(), transaction.getAmount(), LocalDate.now(), transaction.getMessage());
+        Account sender = accountService.getAccountById(transaction.getSender());
+        Account receiver = accountService.getAccountById(transaction.getReceiver());
+
+        transactionService.makeTransaction(sender, receiver, transaction.getAmount(), LocalDate.now(), transaction.getMessage());
         return "redirect:/make-transfer";
     }
 }

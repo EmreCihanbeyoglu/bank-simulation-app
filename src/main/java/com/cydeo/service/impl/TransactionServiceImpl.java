@@ -50,8 +50,8 @@ public class TransactionServiceImpl implements TransactionService {
             executeBalanceAndUpdateIfRequired(amount, sender, receiver);
 
             Transaction transaction = Transaction.builder()
-                    .sender(sender)
-                    .receiver(receiver)
+                    .sender(sender.getId())
+                    .receiver(receiver.getId())
                     .amount(amount)
                     .createDate(createDate)
                     .message(message)
