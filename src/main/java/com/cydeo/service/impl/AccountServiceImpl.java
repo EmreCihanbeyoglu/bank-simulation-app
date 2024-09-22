@@ -1,5 +1,6 @@
 package com.cydeo.service.impl;
 
+import com.cydeo.enums.AccountStatus;
 import com.cydeo.enums.AccountType;
 import com.cydeo.exception.AccountNotFoundException;
 import com.cydeo.exception.BadRequestException;
@@ -34,6 +35,7 @@ public class AccountServiceImpl implements AccountService {
                 .accountType(accountType)
                 .userId(userId)
                 .id(UUID.randomUUID())
+                .accountStatus(AccountStatus.ACTIVE)
                 .build();
         return accountRepository.save(accountToBeCreated);
     }
