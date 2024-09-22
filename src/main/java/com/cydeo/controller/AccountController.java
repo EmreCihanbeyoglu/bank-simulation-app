@@ -1,5 +1,6 @@
 package com.cydeo.controller;
 
+import com.cydeo.enums.AccountType;
 import com.cydeo.model.Account;
 import com.cydeo.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,17 @@ public class AccountController {
 
 
     @GetMapping("/index")
-    public String showIndexPageWithAccountList(Model model) {
+    public String getIndexPage(Model model) {
         List<Account> accountList = accountService.getAllAccounts();
         model.addAttribute("accountList", accountList);
         return "/account/index";
+    }
+
+    @GetMapping("/create-account")
+    public String getCreateAccountPage(Model model) {
+        model.addAttribute("accountTypeList", AccountType.getAccountTypeDisplayedNameList());
+        model.addAttribute("account", Account.builder().build());
+        return "/account/create-account";
     }
 
 }

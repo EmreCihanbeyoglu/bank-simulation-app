@@ -32,7 +32,7 @@
                                 <label for="dropOperator" class="col-form-label">Account Type</label>
                                 <select class="form-control"  id="dropOperator">
                                     <option value="0">Select Account </option>
-                                    <option></option>
+                                    <option th:each="accountType : ${accountTypeList}" th:text="${accountType}" th:value="${accountType}"></option>
                                 </select>
                             </div>
                         </div>
