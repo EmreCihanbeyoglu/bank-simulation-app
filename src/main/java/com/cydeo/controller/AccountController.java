@@ -10,9 +10,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 public class AccountController {
@@ -43,6 +45,18 @@ public class AccountController {
     @PostMapping("/create-account")
     public String createAccount(@ModelAttribute("account") Account account) {
         accountService.createNewAccount(account.getBalance(), LocalDate.now(), account.getAccountType(), account.getUserId());
+        return "redirect:/index";
+    }
+
+    @GetMapping("/delete-account")
+    public String deleteAccount(@RequestParam("accountId") UUID accountId) {
+        accountService.deleteAccountById(accountId);
+        return "redirect:/index";
+    }
+
+    @GetMapping("/activate-account")
+    public String activateAccount(@RequestParam("accountId") UUID accountId) {
+        accountService.activateAccountById(accountId);
         return "redirect:/index";
     }
 

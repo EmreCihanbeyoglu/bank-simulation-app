@@ -50,5 +50,15 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findAccountById(id).orElseThrow(() -> new AccountNotFoundException("Account not found with accountId: " + id));
     }
 
+    @Override
+    public void deleteAccountById(UUID id) {
+        accountRepository.deleteAccountById(id);
+    }
+
+    @Override
+    public void activateAccountById(UUID id) {
+        accountRepository.activateAccountById(id);
+    }
+
 
 }
