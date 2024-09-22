@@ -11,8 +11,8 @@ import java.util.UUID;
 @Builder
 public class Transaction {
 
-    private UUID sender;
-    private UUID receiver;
+    private Account sender;
+    private Account receiver;
     private BigDecimal amount;
     private String message;
     private LocalDate createDate;

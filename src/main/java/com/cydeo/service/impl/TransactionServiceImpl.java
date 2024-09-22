@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,8 +50,8 @@ public class TransactionServiceImpl implements TransactionService {
             executeBalanceAndUpdateIfRequired(amount, sender, receiver);
 
             Transaction transaction = Transaction.builder()
-                    .sender(sender.getId())
-                    .receiver(receiver.getId())
+                    .sender(sender)
+                    .receiver(receiver)
                     .amount(amount)
                     .createDate(createDate)
                     .message(message)
@@ -109,7 +110,13 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findAll();
     }
 
-
+    @Override
+    public List<Transaction> findLast10Transactions() {
+        return findAllTransactions()
+                .stream()
+                .sorted(Comparator.comparing(Transaction::getCreateDate).reversed())
+                .limit(10).toList();
+    }
 
 
 }
