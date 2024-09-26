@@ -48,14 +48,7 @@ public class TransactionServiceImpl implements TransactionService {
             checkAccountOwnership(sender, receiver);
             executeBalanceAndUpdateIfRequired(amount, sender, receiver);
 
-            TransactionDTO transactionDTO = TransactionDTO.builder()
-                    .sender(sender.getId())
-                    .receiver(receiver.getId())
-                    .amount(amount)
-                    .createDate(createDate)
-                    .message(message)
-
-                    .build();
+            TransactionDTO transactionDTO = new TransactionDTO();
 
 
             return transactionRepository.save(transactionDTO);
