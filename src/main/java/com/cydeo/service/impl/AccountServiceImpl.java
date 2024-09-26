@@ -1,10 +1,9 @@
 package com.cydeo.service.impl;
 
+import com.cydeo.dto.AccountDTO;
 import com.cydeo.enums.AccountStatus;
 import com.cydeo.enums.AccountType;
 import com.cydeo.exception.AccountNotFoundException;
-import com.cydeo.exception.BadRequestException;
-import com.cydeo.model.Account;
 import com.cydeo.repository.AccountRepository;
 import com.cydeo.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,35 +26,27 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public Account createNewAccount(BigDecimal balance, LocalDate createDate, AccountType accountType, Long userId) {
-        Account accountToBeCreated = Account.builder()
-                .balance(balance)
-                .createDate(createDate)
-                .accountType(accountType)
-                .userId(userId)
-                .id(UUID.randomUUID())
-                .accountStatus(AccountStatus.ACTIVE)
-                .build();
-        return accountRepository.save(accountToBeCreated);
+    public void createNewAccount(AccountDTO accountDTO) {
+        accountRepository.save(accountDTO);
     }
 
     @Override
-    public List<Account> getAllAccounts() {
+    public List<AccountDTO> getAllAccounts() {
         return accountRepository.findAllAccounts();
     }
 
     @Override
-    public Account getAccountById(UUID id) {
+    public AccountDTO getAccountById(Long id) {
         return accountRepository.findAccountById(id).orElseThrow(() -> new AccountNotFoundException("Account not found with accountId: " + id));
     }
 
     @Override
-    public void deleteAccountById(UUID id) {
+    public void deleteAccountById(Long id) {
         accountRepository.deleteAccountById(id);
     }
 
     @Override
-    public void activateAccountById(UUID id) {
+    public void activateAccountById(Long id) {
         accountRepository.activateAccountById(id);
     }
 

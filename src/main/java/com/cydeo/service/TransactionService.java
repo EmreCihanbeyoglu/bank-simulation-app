@@ -1,7 +1,7 @@
 package com.cydeo.service;
 
-import com.cydeo.model.Account;
-import com.cydeo.model.Transaction;
+import com.cydeo.dto.AccountDTO;
+import com.cydeo.dto.TransactionDTO;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -10,11 +10,11 @@ import java.util.UUID;
 
 public interface TransactionService {
 
-    Transaction makeTransaction(Account sender, Account receiver, BigDecimal amount, LocalDate createDate, String message);
+    TransactionDTO makeTransaction(AccountDTO sender, AccountDTO receiver, BigDecimal amount, LocalDate createDate, String message);
 
-    List<Transaction> findAllTransactions();
+    List<TransactionDTO> findAllTransactions();
 
-    List<Transaction> findLast10Transactions();
+    List<TransactionDTO> findLast10Transactions();
 
-    List<Transaction> findTransactionsByAccountId(UUID accountId);
+    List<TransactionDTO> findTransactionsByAccountId(UUID accountId);
 }

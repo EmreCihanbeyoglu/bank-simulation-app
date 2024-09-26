@@ -1,8 +1,7 @@
 package com.cydeo.controller;
 
+import com.cydeo.dto.AccountDTO;
 import com.cydeo.enums.AccountType;
-import com.cydeo.model.Account;
-import com.cydeo.repository.AccountRepository;
 import com.cydeo.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,33 +28,33 @@ public class AccountController {
 
     @GetMapping("/index")
     public String getIndexPage(Model model) {
-        List<Account> accountList = accountService.getAllAccounts();
-        model.addAttribute("accountList", accountList);
+        List<AccountDTO> accountDTOList = accountService.getAllAccounts();
+        model.addAttribute("accountList", accountDTOList);
         return "/account/index";
     }
 
     @GetMapping("/create-account")
     public String getCreateAccountPage(Model model) {
         model.addAttribute("accountTypeList", AccountType.values());
-        model.addAttribute("account", Account.builder().build());
+        model.addAttribute("account", new AccountDTO());
         return "/account/create-account";
     }
 
 
     @PostMapping("/create-account")
-    public String createAccount(@ModelAttribute("account") Account account) {
-        accountService.createNewAccount(account.getBalance(), LocalDate.now(), account.getAccountType(), account.getUserId());
+    public String createAccount(@ModelAttribute("account") AccountDTO accountDTO) {
+        accountService.createNewAccount(accountDTO);
         return "redirect:/index";
     }
 
     @GetMapping("/delete-account")
-    public String deleteAccount(@RequestParam("accountId") UUID accountId) {
+    public String deleteAccount(@RequestParam("accountId") Long accountId) {
         accountService.deleteAccountById(accountId);
         return "redirect:/index";
     }
 
     @GetMapping("/activate-account")
-    public String activateAccount(@RequestParam("accountId") UUID accountId) {
+    public String activateAccount(@RequestParam("accountId") Long accountId) {
         accountService.activateAccountById(accountId);
         return "redirect:/index";
     }

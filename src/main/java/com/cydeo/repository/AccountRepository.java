@@ -1,7 +1,7 @@
 package com.cydeo.repository;
 
+import com.cydeo.dto.AccountDTO;
 import com.cydeo.enums.AccountStatus;
-import com.cydeo.model.Account;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,32 +12,32 @@ import java.util.UUID;
 @Component
 public class AccountRepository {
 
-    public static List<Account> accountList = new ArrayList<Account>();
+    public static List<AccountDTO> accountDTOList = new ArrayList<AccountDTO>();
 
-    public Account save(Account account) {
-        accountList.add(account);
-        return account;
+    public AccountDTO save(AccountDTO accountDTO) {
+        accountDTOList.add(accountDTO);
+        return accountDTO;
     }
 
-    public List<Account> findAllAccounts() {
-        return accountList;
+    public List<AccountDTO> findAllAccounts() {
+        return accountDTOList;
     }
 
-    public Optional<Account> findAccountById(UUID id) {
-        return accountList
+    public Optional<AccountDTO> findAccountById(Long id) {
+        return accountDTOList
                 .stream()
                 .filter(account -> account.getId().equals(id))
                 .findFirst();
     }
-    public void deleteAccountById(UUID id) {
-        accountList.stream()
+    public void deleteAccountById(Long id) {
+        accountDTOList.stream()
                 .filter(account -> account.getId().equals(id))
                 .findFirst()
                 .ifPresent(account -> account.setAccountStatus(AccountStatus.DELETED));
     }
 
-    public void activateAccountById(UUID id) {
-        accountList.stream()
+    public void activateAccountById(Long id) {
+        accountDTOList.stream()
                 .filter(account -> account.getId().equals(id))
                 .findFirst()
                 .ifPresent(account -> account.setAccountStatus(AccountStatus.ACTIVE));
