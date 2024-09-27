@@ -14,13 +14,13 @@
             <div class="row">
                 <div class="col-md-6">
                     <div>
-                        <form th:action="@{/perform-transfer}" th:object="${transactionDTO}" method="post">
+                        <form th:action="@{/perform-transfer2}" th:object="${transaction}" method="post">
                             <div class="row">
                                 <div class="form-group blu-margin">
                                     <label for="sender" class="col-form-label">Sender</label>
                                     <select class="form-control" id="sender" th:field="*{sender}">
                                         <option value="0">Select Account</option>
-                                        <option th:each="accountDTO : ${accountDTOList}" th:text="${accountDTO.balance} + ' - ' + ${accountDTO.userId} + ' - ' + ${accountDTO.accountType.name()}" th:value=" ${accountDTO.id}"></option>
+                                        <option th:each="account : ${accountList}" th:text="${account.balance} + ' - ' + ${account.userId} + ' - ' + ${account.accountType.name()}" th:value=" ${account.id}"></option>
                                     </select>
                                 </div>
         
@@ -28,7 +28,7 @@
                                     <label for="receiver" class="col-form-label">Receiver</label>
                                     <select class="form-control" id="receiver" th:field="*{receiver}">
                                         <option value="0">Select Account</option>
-                                        <option th:each="accountDTO : ${accountDTOList}" th:text="${accountDTO.balance} + ' - ' + ${accountDTO.userId} + ' - ' + ${accountDTO.accountType.name()}" th:value=" ${accountDTO.id}"></option>
+                                        <option th:each="account : ${accountList}" th:text="${account.balance} + ' - ' + ${account.userId} + ' - ' + ${account.accountType.name()}" th:value=" ${account.id}"></option>
                                     </select>
                                 </div>
         
@@ -61,12 +61,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="transactionDTO : ${transactionList}">
-                                    <td th:text="${transactionDTO.sender}"></td>
-                                    <td th:text="${transactionDTO.receiver}"></td>
-                                    <td th:text="${transactionDTO.amount}"></td>
-                                    <td th:text="${transactionDTO.createDate}"></td>
-                                    <td th:text="${transactionDTO.message}"></td>
+                                <tr th:each="transaction : ${transactionList}">
+                                    <td th:text="${transaction.sender.getId()}"></td>
+                                    <td th:text="${transaction.receiver.getId()}"></td>
+                                    <td th:text="${transaction.amount}"></td>
+                                    <td th:text="${transaction.createDate}"></td>
+                                    <td th:text="${transaction.message}"></td>
                                 </tr>
                             </tbody>
                         </table>

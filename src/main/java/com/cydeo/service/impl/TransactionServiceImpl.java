@@ -2,11 +2,14 @@ package com.cydeo.service.impl;
 
 import com.cydeo.dto.AccountDTO;
 import com.cydeo.dto.TransactionDTO;
+import com.cydeo.entity.Account;
+import com.cydeo.entity.Transaction;
 import com.cydeo.enums.AccountType;
 import com.cydeo.exception.AccountOwnershipException;
 import com.cydeo.exception.BadRequestException;
 import com.cydeo.exception.BalanceNotSufficientException;
 import com.cydeo.exception.UnderConstructionException;
+import com.cydeo.mapper.EntityMapper;
 import com.cydeo.repository.TransactionRepository;
 import com.cydeo.service.AccountService;
 import com.cydeo.service.TransactionService;
@@ -23,6 +26,7 @@ import java.util.UUID;
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
+    private final EntityMapper entityMapper;
     @Value("${under_construction}")
     private boolean underConstruction;
 
@@ -30,13 +34,14 @@ public class TransactionServiceImpl implements TransactionService {
     private final AccountService accountService;
 
     @Autowired
-    public TransactionServiceImpl(TransactionRepository transactionRepository, AccountService accountService) {
+    public TransactionServiceImpl(TransactionRepository transactionRepository, AccountService accountService, EntityMapper entityMapper) {
         this.transactionRepository = transactionRepository;
         this.accountService = accountService;
+        this.entityMapper = entityMapper;
     }
 
     @Override
-    public TransactionDTO makeTransaction(AccountDTO sender, AccountDTO receiver, BigDecimal amount, LocalDate createDate, String message) {
+    public void makeTransaction(AccountDTO sender, AccountDTO receiver, BigDecimal amount, LocalDate createDate, String message) {
         /*
             - if sender or receiver is null?
             - if sender and receiver is the same account?
@@ -48,10 +53,15 @@ public class TransactionServiceImpl implements TransactionService {
             checkAccountOwnership(sender, receiver);
             executeBalanceAndUpdateIfRequired(amount, sender, receiver);
 
-            TransactionDTO transactionDTO = new TransactionDTO();
+            Transaction transaction = new Transaction();
+            transaction.setAmount(amount);
+            transaction.setCreateDate(createDate);
+            transaction.setMessage(message);
+            transaction.setSender(entityMapper.map(sender, Account.class));
+            transaction.setReceiver(entityMapper.map(receiver, Account.class));
 
 
-            return transactionRepository.save(transactionDTO);
+            transactionRepository.save(transaction);
         } else {
             throw new UnderConstructionException("App is under construction, please try again later!");
         }
@@ -89,8 +99,18 @@ public class TransactionServiceImpl implements TransactionService {
 
     private void executeBalanceAndUpdateIfRequired(BigDecimal amount, AccountDTO sender, AccountDTO receiver) {
         if(sender.getBalance().compareTo(amount) > 0) {
-            sender.setBalance(sender.getBalance().subtract(amount));
-            receiver.setBalance(receiver.getBalance().add(amount));
+
+            // to avoid update unrelated parts, you can fetch the database record and do manpulation on it directly
+            AccountDTO senderFromDB = accountService.getAccountById(sender.getId());
+            AccountDTO receiverFromDB = accountService.getAccountById(receiver.getId());
+
+            senderFromDB.setBalance(senderFromDB.getBalance().subtract(amount));
+            receiverFromDB.setBalance(receiverFromDB.getBalance().add(amount));
+
+            accountService.updateAccount(senderFromDB);
+            accountService.updateAccount(receiverFromDB);
+
+
         } else {
             throw new BalanceNotSufficientException("Sender balance is not sufficient for given amount");
         }
@@ -99,7 +119,11 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<TransactionDTO> findAllTransactions() {
-        return transactionRepository.findAll();
+        return transactionRepository
+                .findAll()
+                .stream()
+                .map(transaction -> entityMapper.map(transaction, TransactionDTO.class))
+                .toList();
     }
 
     @Override
@@ -111,8 +135,12 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionDTO> findTransactionsByAccountId(UUID accountId) {
-        return transactionRepository.findTransactionsByAccountId(accountId);
+    public List<TransactionDTO> findTransactionsByAccountId(Long accountId) {
+        return transactionRepository.fetchTransactionListByAccountId(accountId)
+                .stream()
+                .map(transaction -> entityMapper.map(transaction, TransactionDTO.class))
+                .toList();
+
     }
 
 

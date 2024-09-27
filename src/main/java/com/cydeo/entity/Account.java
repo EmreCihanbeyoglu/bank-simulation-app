@@ -29,7 +29,7 @@ public class Account {
     private AccountType accountType;
 
     @Column(columnDefinition = "DATE")
-    private LocalDate transactionDate;
+    private LocalDate createDate;
 
     private Long userId;
 

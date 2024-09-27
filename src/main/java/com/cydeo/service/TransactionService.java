@@ -10,11 +10,11 @@ import java.util.UUID;
 
 public interface TransactionService {
 
-    TransactionDTO makeTransaction(AccountDTO sender, AccountDTO receiver, BigDecimal amount, LocalDate createDate, String message);
+    void makeTransaction(AccountDTO sender, AccountDTO receiver, BigDecimal amount, LocalDate createDate, String message);
 
     List<TransactionDTO> findAllTransactions();
 
     List<TransactionDTO> findLast10Transactions();
 
-    List<TransactionDTO> findTransactionsByAccountId(UUID accountId);
+    List<TransactionDTO> findTransactionsByAccountId(Long accountId);
 }

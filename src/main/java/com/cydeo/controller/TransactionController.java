@@ -30,23 +30,23 @@ public class TransactionController {
 
     @GetMapping("/make-transfer")
     public String getMakeTransferPage(Model model) {
-        model.addAttribute("accountList", accountService.getAllAccounts());
+        model.addAttribute("accountList", accountService.getAllActiveAccounts());
         model.addAttribute("transaction", new TransactionDTO());
         model.addAttribute("transactionList", transactionService.findLast10Transactions());
         return "/transaction/make-transfer";
     }
 
-    @PostMapping("/perform-transfer")
-    public String makeTransfer(@ModelAttribute("transaction") TransactionDTO transactionDTO) {
-        AccountDTO sender = accountService.getAccountById(transactionDTO.getSender().getId());
-        AccountDTO receiver = accountService.getAccountById(transactionDTO.getReceiver().getId());
+    @PostMapping("/perform-transfer2")
+    public String makeTransfer(@ModelAttribute("transaction") TransactionDTO transaction) {
+        AccountDTO sender = accountService.getAccountById(transaction.getSender().getId());
+        AccountDTO receiver = accountService.getAccountById(transaction.getReceiver().getId());
 
-        transactionService.makeTransaction(sender, receiver, transactionDTO.getAmount(), LocalDate.now(), transactionDTO.getMessage());
+        transactionService.makeTransaction(sender, receiver, transaction.getAmount(), LocalDate.now(), transaction.getMessage());
         return "redirect:/make-transfer";
     }
 
     @GetMapping("/account-transaction")
-    public String getAccountTransactionsPage(@RequestParam("accountId") UUID accountId, Model model) {
+    public String getAccountTransactionsPage(@RequestParam("accountId") Long accountId, Model model) {
         model.addAttribute("transactionList", transactionService.findTransactionsByAccountId(accountId));
         return "transaction/transactions";
     }
